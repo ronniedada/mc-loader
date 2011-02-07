@@ -1,12 +1,31 @@
-all: main.c
-	gcc -o mc-loader main.c -Wl,-rpath,/usr/local/lib -lmemcached -lsasl2
+MCD_LIBRARY_PATH := /root/mc-loader/lib
+MCD_HEADERS_PATH := $(shell realpath $(MCD_LIBRARY_PATH)/../include)
 
-verbose: main.c
-	gcc -o mc-loader main.c -Wl,-rpath,/usr/local/lib -lmemcached -lsasl2 -D VERBOSE
+EXTRA_FLAGS :=
 
-debug: main.c
-	gcc -o mc-loader main.c -Wl,-rpath,/usr/local/lib -lmemcached -lsasl2 -O0 -gfull
+ifdef MCD_VERBOSE
+EXTRA_CPPFLAGS += -D VERBOSE
+endif
+
+ifdef MCD_DEBUG
+EXTRA_CFLAGS += -O0 -fno-inline -gfull
+endif
+
+CPPFLAGS += $(EXTRA_CPPFLAGS)
+CFLAGS += -I$(MCD_HEADERS_PATH) $(EXTRA_CFLAGS)
+LDFLAGS += -Wl,-rpath,$(MCD_LIBRARY_PATH) -L$(MCD_LIBRARY_PATH) -lmemcached -lsasl2
+
+mc-loader: main.o
+	gcc -o $@ $^ $(LDFLAGS)
+
+verbose:
+	$(MAKE) MCD_VERBOSE=1 mc-loader
+
+debug:
+	$(MAKE) MCD_DEBUG=1 mc-loader
 
 clean:
 	rm -f mc-loader
 	rm -rf mc-loader.dSYM
+
+.PHONY: verbose debug clean
