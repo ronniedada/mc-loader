@@ -21,9 +21,11 @@ def main():
 
     childs = [spawn(i) for i in xrange(width)]
 
+    stdins = [c.stdin for c in childs]
+
     counter = 0
     for l in sys.stdin:
-        childs[counter].stdin.write(l)
+        stdins[counter].write(l)
         counter = (counter + 1) % width
 
     for i in xrange(width):
