@@ -193,7 +193,7 @@ int main(int argc, char **argv) {
       if (rc != MEMCACHED_SUCCESS) {
         rval = 1;
         fails ++;
-        fprintf(stderr, "Failed to set: %s, due to error: %d\n", key, rc);
+        fprintf(stderr, "Failed to set: %s, due to error: %d (%s)\n", key, rc, memcached_strerror(memc, rc));
       } else {
         passes ++;
       }
