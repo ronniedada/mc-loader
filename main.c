@@ -224,7 +224,7 @@ int main(int argc, char **argv) {
         fails ++;
         switch (err_reason) {
         case MCLOADER_MCFAIL:
-          fprintf(stderr, "Failed to get: %s, memcached failure %d\n", key, rc);
+          fprintf(stderr, "Failed to get: %s, memcached failure %d (%s)\n", key, rc, memcached_strerror(memc, rc));
           break;
         case MCLOADER_SIZEDIF:
             fprintf(stderr, "Failed to get: %s, data size difference. expected %lu, got %lu\n", key, size, rsize);
