@@ -26,6 +26,7 @@ debug:
 
 clean:
 	rm -f mc-loader
+	rm -rf main.o
 	rm -rf mc-loader.dSYM
 
 .PHONY: verbose debug clean
