@@ -1,7 +1,7 @@
 MCD_LIBRARY_PATH := /root/mc-loader/lib
 MCD_HEADERS_PATH := $(shell realpath $(MCD_LIBRARY_PATH)/../include)
 
-EXTRA_FLAGS :=
+EXTRA_CFLAGS := -Wall -pedantic -std=gnu99
 
 ifdef MCD_VERBOSE
 EXTRA_CPPFLAGS += -D VERBOSE
