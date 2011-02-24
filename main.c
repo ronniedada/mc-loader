@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include <libmemcached/memcached.h>
 
 typedef enum {
   MCLOADER_SUCCESS = 0,
   MCLOADER_MCFAIL  = 1,
   MCLOADER_SIZEDIF = 2,
-  MCLOADER_DATADIF = 3,
+  MCLOADER_DATADIF = 3
 } MCLOADER_ERROR_CODE;
 
 /*
@@ -227,7 +228,7 @@ int main(int argc, char **argv) {
           fprintf(stderr, "Failed to get: %s, memcached failure %d (%s)\n", key, rc, memcached_strerror(memc, rc));
           break;
         case MCLOADER_SIZEDIF:
-            fprintf(stderr, "Failed to get: %s, data size difference. expected %lu, got %lu\n", key, size, rsize);
+            fprintf(stderr, "Failed to get: %s, data size difference. expected %u, got %u\n", key, size, rsize);
           break;
         case MCLOADER_DATADIF:
           fprintf(stderr, "Failed to get: %s, data value difference\n", key);
