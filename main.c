@@ -132,6 +132,7 @@ int main(int argc, char **argv) {
   /* connect to the memcached server */
   memc = memcached_create(NULL);
   memcached_behavior_set(memc, MEMCACHED_BEHAVIOR_NO_BLOCK, 1);
+  memcached_behavior_set(memc, MEMCACHED_BEHAVIOR_TCP_NODELAY, 1);
   if (binary) {
     memcached_behavior_set(memc, MEMCACHED_BEHAVIOR_BINARY_PROTOCOL, 1);
   }
