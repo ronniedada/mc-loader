@@ -184,7 +184,7 @@ int main(int argc, char **argv) {
         rc = memcached_set(memc, key, nkey, data, size, 0, 0);
         /* only backoff on temp mem errors */
         if (rc == oom_error_code) {
-          backoff_us += (backoff_us/8);
+          backoff_us += (backoff_us + 31) / 32;
           if (backoff_us > 4000000) {
             backoff_us = 4000000;
           }
@@ -193,8 +193,13 @@ int main(int argc, char **argv) {
 #endif
           usleep(backoff_us);
         }
-      } while ((rc == oom_error_code) && (backoff_us < 4000000));
-      backoff_us = INITIAL_BACKOFF;
+      } while (rc == oom_error_code);
+      if (backoff_us > INITIAL_BACKOFF) {
+        backoff_us -= (backoff_us + 63) / 64;
+        if (backoff_us < INITIAL_BACKOFF) {
+          backoff_us = INITIAL_BACKOFF;
+        }
+      }
       if (rc != MEMCACHED_SUCCESS) {
         rval = 1;
         fails ++;
@@ -202,15 +207,6 @@ int main(int argc, char **argv) {
       } else {
         passes ++;
       }
-      backoff_us -= (10000 + (backoff_us/20));
-      if (backoff_us < 0) {
-        backoff_us = 0;
-      }
-#ifdef VERBOSE
-      if (backoff_us > 0) {
-        fprintf(stderr, "backoff: %d us\n", backoff_us);
-      }
-#endif
     } else {
       rdata = memcached_get(memc, key, nkey, &rsize, &flags, &rc);
       err_reason = MCLOADER_SUCCESS;
