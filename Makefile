@@ -4,11 +4,11 @@ MCD_HEADERS_PATH := $(shell realpath $(MCD_LIBRARY_PATH)/../include)
 EXTRA_CFLAGS := -Wall -pedantic -std=gnu99
 
 ifdef MCD_VERBOSE
-EXTRA_CPPFLAGS += -D VERBOSE
+EXTRA_CPPFLAGS += -DVERBOSE
 endif
 
 ifdef MCD_DEBUG
-EXTRA_CFLAGS += -O0 -fno-inline -gfull
+EXTRA_CFLAGS += -O0 -fno-inline -gdwarf-2 -ggdb3
 endif
 
 CPPFLAGS += $(EXTRA_CPPFLAGS)
