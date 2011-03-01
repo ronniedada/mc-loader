@@ -46,6 +46,8 @@ static int parse_auth(char *auth, char **username, char **password) {
   return 0;
 }
 
+#define INITIAL_BACKOFF 100
+
 int main(int argc, char **argv) {
 
   char *hostname;
@@ -74,7 +76,7 @@ int main(int argc, char **argv) {
   FILE *file;
   char *fixed_data = NULL;
   int fixed_datasize = 0;
-  int backoff_us = 0;
+  int backoff_us = INITIAL_BACKOFF;
   int fails = 0;
   int passes = 0;
   int oom_error_code = 10;
@@ -180,7 +182,7 @@ int main(int argc, char **argv) {
         rc = memcached_set(memc, key, nkey, data, size, 0, 0);
         /* only backoff on temp mem errors */
         if (rc == oom_error_code) {
-          backoff_us += 10000 + (backoff_us/20);
+          backoff_us += (backoff_us/8);
           if (backoff_us > 4000000) {
             backoff_us = 4000000;
           }
@@ -190,6 +192,7 @@ int main(int argc, char **argv) {
           usleep(backoff_us);
         }
       } while ((rc == oom_error_code) && (backoff_us < 4000000));
+      backoff_us = INITIAL_BACKOFF;
       if (rc != MEMCACHED_SUCCESS) {
         rval = 1;
         fails ++;
