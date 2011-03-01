@@ -1,3 +1,4 @@
+/* -*- Mode: C; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
