@@ -6,6 +6,7 @@ require 'trollop'
 $opts = Trollop::options do
   opt :keys, "keyset size", :type => :int, :required => true
   opt :value_size, "size of values", :type => :int, :default => 1024
+  opt :value, "value", :type => :string
 end
 
 def generate_value
@@ -22,7 +23,11 @@ end
 
 i = $opts[:keys]-1
 
-suffix = " #{generate_value}\n"
+value = $opts[:value] || generate_value
+
+STDERR.puts "value is: #{value.inspect}"
+
+suffix = " #{value}\n"
 while i >= 0
   STDOUT << sprintf("%08d", i) << suffix
   i -= 1
