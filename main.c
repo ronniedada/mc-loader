@@ -49,6 +49,8 @@ static int parse_auth(char *auth, char **username, char **password) {
 
 #define INITIAL_BACKOFF 100
 
+#define LINE_BUFFER_SIZE 65536
+
 int main(int argc, char **argv) {
 
   char *hostname;
@@ -62,7 +64,7 @@ int main(int argc, char **argv) {
   int i;
   int j;
   memcached_st *memc;
-  char *buffer = malloc(sizeof(char) * 64);
+  char *buffer = malloc(sizeof(char) * LINE_BUFFER_SIZE);
   char *key = NULL;
   size_t nkey = 0;
   char *data = NULL;
@@ -87,6 +89,10 @@ int main(int argc, char **argv) {
   if (argc < 3) {
     printf("mc-loader <server>:<port> <keyset> [check] [binary] [valuesize size] [sasl username:password]\n");
     exit (1);
+  }
+
+  if (!buffer) {
+    abort();
   }
 
   parse_host(argv[1], &hostname, &port);
@@ -160,7 +166,7 @@ int main(int argc, char **argv) {
   }
 
   /* read in keys and either set or get */
-  while (fgets(buffer,63,file) != NULL) {
+  while (fgets(buffer,LINE_BUFFER_SIZE,file) != NULL) {
     key = buffer;
     ptr = strchr(key, ' ');
     if (ptr == NULL) {
