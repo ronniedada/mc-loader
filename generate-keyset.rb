@@ -7,11 +7,16 @@ $opts = Trollop::options do
   opt :keys, "keyset size", :type => :int, :required => true
   opt :value_size, "size of values", :type => :int, :default => 1024
   opt :value, "value", :type => :string
+  opt :random_value
 end
 
 def generate_value
-  @value ||= begin
-               "a" * $opts[:value_size]
+  @value ||= if $opts[:random_value]
+               File.open("/dev/urandom", "r") {|f| f.read($opts[:value_size])}
+             else
+               begin
+                 "a" * $opts[:value_size]
+               end
              end
 end
 

@@ -28,11 +28,13 @@ class JSONDocStreamReader
   end
 
   def next
-    line = @io.gets
-    return unless line
-    return if line == "]}\n" || line.getbyte(-1) == 91 # "["
-    line.chomp!
-    line.chomp!(",")
+    begin
+      line = @io.gets
+      return unless line
+      line.chomp!
+      line.chomp!(",")
+      return self.next() if line == "]}"
+    end while line.getbyte(-1) == 91 # "["
     Yajl::Parser.new.parse(line)
   end
 
@@ -45,6 +47,7 @@ class JSONDocStreamReader
     end
     id = real_doc["_id"]
     real_doc.delete("_id")
+    # print "."; STDOUT.flush
     [id, real_doc]
   end
 end
@@ -139,7 +142,7 @@ catch :break_higher do
     break unless real_doc
     begin
       $db.run do
-        5000.times do
+        500.times do
           save_doc id, real_doc, true
           id, real_doc = stream.next_doc_id
           throw :break_higher unless real_doc
