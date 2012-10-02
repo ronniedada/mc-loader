@@ -1,5 +1,5 @@
-MCD_LIBRARY_PATH := /root/mc-loader/lib
-MCD_HEADERS_PATH := $(shell realpath $(MCD_LIBRARY_PATH)/../include)
+MCD_LIBRARY_PATH := /usr/local/lib
+MCD_HEADERS_PATH := $(MCD_LIBRARY_PATH)/../include
 
 EXTRA_CFLAGS := -Wall -pedantic -std=gnu99
 
@@ -17,6 +17,9 @@ LDFLAGS += -Wl,-rpath,$(MCD_LIBRARY_PATH) -L$(MCD_LIBRARY_PATH) -lmemcached -lsa
 
 mc-loader: main.o
 	gcc -o $@ $^ $(LDFLAGS)
+
+main.o: main.c
+	gcc -c $@ $^ $(CFLAGS)
 
 verbose:
 	$(MAKE) MCD_VERBOSE=1 mc-loader

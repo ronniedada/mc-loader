@@ -148,9 +148,8 @@ int main(int argc, char **argv) {
       exit(1);
     }
 
-    memc->sasl = malloc(sizeof(struct memcached_sasl_st));
-    memc->sasl->callbacks = NULL;
-    memc->sasl->is_allocated = false;
+    memc->sasl.callbacks = NULL;
+    memc->sasl.is_allocated = false;
     memcached_set_sasl_auth_data(memc, sasl_username, sasl_password);
   }
   memcached_server_add(memc, hostname, port);
